@@ -12,17 +12,15 @@ import (
 func Init(s storage.Storage, env *config.BaseEnv) http.Handler {
 	r := New()
 
-	withMiddleware := middleware.Chain(
-		middleware.Logger,
-		middleware.Recoverer,
-	)
+	public := middleware.UsePublic()
+	protected := middleware.UseProtected()
 
 	storageHandler := handlers.NewStorageHandler(s, env)
 
-	r.Post("/upload", withMiddleware(http.HandlerFunc(storageHandler.Upload)))
-	r.Get("/files", withMiddleware(http.HandlerFunc(storageHandler.List)))
-	r.Get("/files/", withMiddleware(http.HandlerFunc(storageHandler.Download)))
-	r.Delete("/delete/", withMiddleware(http.HandlerFunc(storageHandler.Delete)))
+	r.Get("/files", public(http.HandlerFunc(storageHandler.List)))
+	r.Get("/files/", public(http.HandlerFunc(storageHandler.Download)))
+	r.Post("/upload", protected(http.HandlerFunc(storageHandler.Upload)))
+	r.Delete("/delete/", protected(http.HandlerFunc(storageHandler.Delete)))
 
 	return r.Handler()
 }

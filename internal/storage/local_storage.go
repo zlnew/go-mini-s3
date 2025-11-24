@@ -20,6 +20,17 @@ func NewLocalStorage(basepath string) *LocalStorage {
 	return &LocalStorage{BasePath: filepath.Clean(basepath)}
 }
 
+func (l *LocalStorage) WithBucket(bucket string) *LocalStorage {
+	clean := filepath.Clean(bucket)
+	if clean == "." || clean == "" {
+		clean = ""
+	}
+
+	return &LocalStorage{
+		BasePath: filepath.Join(l.BasePath, clean),
+	}
+}
+
 func (l *LocalStorage) Save(file io.Reader, filename string) error {
 	fullPath, err := l.safePath(filename)
 	if err != nil {

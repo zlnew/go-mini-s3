@@ -22,14 +22,16 @@ func (h *StorageHandler) Upload(w http.ResponseWriter, r *http.Request) {
 	defer file.Close()
 
 	if header == nil || header.Filename == "" {
-		http.Error(w, "filename required", http.StatusBadRequest)
+		http.Error(w, "filepath required", http.StatusBadRequest)
 		return
 	}
 
-	if err := h.Storage.Save(file, header.Filename); err != nil {
+	filepath := header.Filename
+
+	if err := h.Storage.Save(file, filepath); err != nil {
 		http.Error(w, "upload failed", http.StatusInternalServerError)
 		return
 	}
 
-	fmt.Fprintln(w, "uploaded:", header.Filename)
+	fmt.Fprintln(w, "uploaded:", filepath)
 }

@@ -1,6 +1,6 @@
-POST {{base_url}}/{{bucket}}
+POST {{BASE_URL}}/{{BUCKET}}
 Content-Type: multipart/form-data
-X-Api-Key: {{api_key}}
+X-Api-Key: {{API_KEY}}
 
 [Multipart]
-file: file,{{filepath}};
+file: file,{{FILEPATH}};

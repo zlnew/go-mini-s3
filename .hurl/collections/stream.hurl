@@ -1,2 +1,2 @@
-GET {{base_url}}/{{bucket}}/{{filepath}}
-X-Api-Key: {{api_key}}
+GET {{BASE_URL}}/{{BUCKET}}/{{FILEPATH}}
+X-Api-Key: {{API_KEY}}

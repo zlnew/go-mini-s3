@@ -1,2 +1,2 @@
-DELETE {{base_url}}/{{bucket}}/{{filepath}}
-X-Api-Key: {{api_key}}
+DELETE {{BASE_URL}}/{{BUCKET}}/{{FILEPATH}}
+X-Api-Key: {{API_KEY}}

@@ -3,35 +3,39 @@ include .env
 export $(shell sed 's/=.*//' .env)
 endif
 
+# Test mode toggle
+ifeq ($(TEST),true)
+HURL_MODE = --test
+else
+HURL_MODE =
+endif
+
 public-list:
-	hurl --variables-file ./.env ./collections/list.hurl
-
+	hurl $(HURL_MODE) --variables-file ./.env ./collections/list.hurl
 public-stream:
-	hurl --variables-file ./.env ./collections/stream.hurl
-
+	hurl $(HURL_MODE) --variables-file ./.env ./collections/stream.hurl --output $(FILE_ROOT)/${FILEPATH}
 public-download:
-	hurl --variables-file ./.env ./collections/download.hurl
-
+	hurl $(HURL_MODE) --variables-file ./.env ./collections/download.hurl --output $(FILE_ROOT)/${FILEPATH}
 public-upload:
-	hurl --variables-file ./.env ./collections/upload.hurl --file-root $(FILE_ROOT)
-
+	hurl $(HURL_MODE) --variables-file ./.env ./collections/upload.hurl --file-root $(FILE_ROOT)
 public-delete:
-	hurl --variables-file ./.env ./collections/delete.hurl
+	hurl $(HURL_MODE) --variables-file ./.env ./collections/delete.hurl
 
 # =========================================================
 
 private-list:
-	hurl --variables-file ./.env ./collections/list.hurl --variable bucket=private
-
+	hurl $(HURL_MODE) --variables-file ./.env ./collections/list.hurl --variable BUCKET=private
 private-stream:
-	hurl --variables-file ./.env ./collections/stream.hurl --variable bucket=private
-
+	hurl $(HURL_MODE) --variables-file ./.env ./collections/stream.hurl --variable BUCKET=private --output $(FILE_ROOT)/${FILEPATH}
 private-download:
-	hurl --variables-file ./.env ./collections/download.hurl --variable bucket=private
-
+	hurl $(HURL_MODE) --variables-file ./.env ./collections/download.hurl --variable BUCKET=private --output $(FILE_ROOT)/${FILEPATH}
 private-upload:
-	hurl --variables-file ./.env ./collections/upload.hurl --variable bucket=private --file-root $(FILE_ROOT)
-
+	hurl $(HURL_MODE) --variables-file ./.env ./collections/upload.hurl --variable BUCKET=private --file-root $(FILE_ROOT)
 private-delete:
-	hurl --variables-file ./.env ./collections/delete.hurl --variable bucket=private
+	hurl $(HURL_MODE) --variables-file ./.env ./collections/delete.hurl --variable BUCKET=private
+
+# Run groups
+public-all: public-list public-stream public-download public-upload public-delete
+private-all: private-list private-stream private-download private-upload private-delete
+all: public-all private-all
 

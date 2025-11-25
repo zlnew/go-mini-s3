@@ -1,5 +1,8 @@
+.gocache
+
 # ENV
 .env
+.hurl/.env
 
 # Upload files (local storage)
 uploads

@@ -14,9 +14,10 @@ import (
 var ErrInvalidPath = errors.New("invalid filepath")
 
 type Storage interface {
-	Save(file io.Reader, filepath string) error
-	Open(filepath string) ([]byte, error)
-	Delete(filepath string) error
+	Save(file io.Reader, path string) error
+	Open(path string) ([]byte, error)
+	Stream(path string) (io.ReadSeeker, fs.FileInfo, error)
+	Delete(path string) error
 	List() ([]FileList, error)
 }
 
@@ -45,8 +46,8 @@ func (l *LocalStorage) WithBucket(bucket string) *LocalStorage {
 	}
 }
 
-func (l *LocalStorage) Save(file io.Reader, filepathInput string) error {
-	fullPath, err := l.safePath(filepathInput)
+func (l *LocalStorage) Save(file io.Reader, path string) error {
+	fullPath, err := l.safePath(path)
 	if err != nil {
 		return err
 	}
@@ -69,8 +70,8 @@ func (l *LocalStorage) Save(file io.Reader, filepathInput string) error {
 	return nil
 }
 
-func (l *LocalStorage) Open(filepathInput string) ([]byte, error) {
-	fullPath, err := l.safePath(filepathInput)
+func (l *LocalStorage) Open(path string) ([]byte, error) {
+	fullPath, err := l.safePath(path)
 	if err != nil {
 		return nil, err
 	}
@@ -83,8 +84,27 @@ func (l *LocalStorage) Open(filepathInput string) ([]byte, error) {
 	return content, nil
 }
 
-func (l *LocalStorage) Delete(filepathInput string) error {
-	fullPath, err := l.safePath(filepathInput)
+func (l *LocalStorage) Stream(path string) (io.ReadSeeker, fs.FileInfo, error) {
+	fullPath, err := l.safePath(path)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	file, err := os.Open(fullPath)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	stat, err := file.Stat()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return file, stat, nil
+}
+
+func (l *LocalStorage) Delete(path string) error {
+	fullPath, err := l.safePath(path)
 	if err != nil {
 		return err
 	}
@@ -120,8 +140,8 @@ func (l *LocalStorage) List() ([]FileList, error) {
 	return files, nil
 }
 
-func (l *LocalStorage) safePath(filepathInput string) (string, error) {
-	cleanName := filepath.Clean(filepathInput)
+func (l *LocalStorage) safePath(path string) (string, error) {
+	cleanName := filepath.Clean(path)
 
 	if cleanName == "." || cleanName == "/" || cleanName == "" {
 		return "", fmt.Errorf("%w", ErrInvalidPath)

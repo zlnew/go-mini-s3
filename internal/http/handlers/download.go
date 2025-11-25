@@ -10,7 +10,7 @@ import (
 	"go/nano-cloud/internal/storage"
 )
 
-func (h *StorageHandler) Download(w http.ResponseWriter, r *http.Request) {
+func (h *StorageHandler) Open(w http.ResponseWriter, r *http.Request) {
 	filepath := chi.URLParam(r, "*")
 	if filepath == "" {
 		http.Error(w, "filepath required", http.StatusBadRequest)
@@ -25,7 +25,7 @@ func (h *StorageHandler) Download(w http.ResponseWriter, r *http.Request) {
 		case errors.Is(err, fs.ErrNotExist):
 			http.NotFound(w, r)
 		default:
-			http.Error(w, "failed to download file", http.StatusInternalServerError)
+			http.Error(w, "failed to open file", http.StatusInternalServerError)
 		}
 		return
 	}

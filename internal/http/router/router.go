@@ -31,7 +31,8 @@ func Init(s storage.Storage, env *config.BaseEnv) http.Handler {
 	privateStorageHandler := handlers.NewStorageHandler(privateStorage, env)
 
 	r.Get("/public", publicStorageHandler.List)
-	r.Get("/public/*", publicStorageHandler.Download)
+	r.Get("/public/download/*", publicStorageHandler.Open)
+	r.Get("/public/*", publicStorageHandler.Stream)
 
 	protected := r.With(APIKey(env.APIKey))
 
@@ -42,7 +43,8 @@ func Init(s storage.Storage, env *config.BaseEnv) http.Handler {
 	protected.Delete("/private/*", privateStorageHandler.Delete)
 
 	protected.Get("/private", privateStorageHandler.List)
-	protected.Get("/private/*", privateStorageHandler.Download)
+	protected.Get("/private/download/*", privateStorageHandler.Open)
+	protected.Get("/private/*", privateStorageHandler.Stream)
 
 	return r
 }

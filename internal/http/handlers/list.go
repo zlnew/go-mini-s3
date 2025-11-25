@@ -6,13 +6,13 @@ import (
 )
 
 func (h *StorageHandler) List(w http.ResponseWriter, r *http.Request) {
-	filepaths, err := h.Storage.List()
+	paths, err := h.Storage.List()
 	if err != nil {
 		http.Error(w, "failed to list files", http.StatusInternalServerError)
 		return
 	}
 
-	resp, err := json.MarshalIndent(filepaths, "", "  ")
+	resp, err := json.MarshalIndent(paths, "", "  ")
 	if err != nil {
 		http.Error(w, "failed to encode list", http.StatusInternalServerError)
 		return

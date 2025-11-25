@@ -15,8 +15,8 @@ var ErrInvalidPath = errors.New("invalid filepath")
 
 type Storage interface {
 	Save(file io.Reader, path string) error
-	Open(path string) ([]byte, error)
-	Stream(path string) (io.ReadSeeker, fs.FileInfo, error)
+	Read(path string) ([]byte, error)
+	Open(path string) (io.ReadSeeker, fs.FileInfo, error)
 	Delete(path string) error
 	List() ([]FileList, error)
 }
@@ -70,7 +70,7 @@ func (l *LocalStorage) Save(file io.Reader, path string) error {
 	return nil
 }
 
-func (l *LocalStorage) Open(path string) ([]byte, error) {
+func (l *LocalStorage) Read(path string) ([]byte, error) {
 	fullPath, err := l.safePath(path)
 	if err != nil {
 		return nil, err
@@ -84,7 +84,7 @@ func (l *LocalStorage) Open(path string) ([]byte, error) {
 	return content, nil
 }
 
-func (l *LocalStorage) Stream(path string) (io.ReadSeeker, fs.FileInfo, error) {
+func (l *LocalStorage) Open(path string) (io.ReadSeeker, fs.FileInfo, error) {
 	fullPath, err := l.safePath(path)
 	if err != nil {
 		return nil, nil, err

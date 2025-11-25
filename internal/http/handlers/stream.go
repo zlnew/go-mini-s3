@@ -18,7 +18,7 @@ func (h *StorageHandler) Stream(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file, stat, err := h.Storage.Stream(path)
+	file, stat, err := h.Storage.Open(path)
 	if err != nil {
 		switch {
 		case errors.Is(err, storage.ErrInvalidPath):

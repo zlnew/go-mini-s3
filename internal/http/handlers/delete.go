@@ -11,13 +11,13 @@ import (
 )
 
 func (h *StorageHandler) Delete(w http.ResponseWriter, r *http.Request) {
-	filepath := chi.URLParam(r, "*")
-	if filepath == "" {
+	path := chi.URLParam(r, "*")
+	if path == "" {
 		http.Error(w, "filepath required", http.StatusBadRequest)
 		return
 	}
 
-	err := h.Storage.Delete(filepath)
+	err := h.Storage.Delete(path)
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) {
 			http.NotFound(w, r)
@@ -33,5 +33,5 @@ func (h *StorageHandler) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintln(w, "deleted:", filepath)
+	fmt.Fprintln(w, "deleted:", path)
 }
